@@ -1,3 +1,4 @@
+// 参考 https://zenn.dev/shimpo/articles/setup-go-mysql-with-docker-compose
 package main
 
 import (
@@ -6,13 +7,21 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type User struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID            int64          `db:"id" json:"id"`
+	Email         string         `db:"email" json:"email"`
+	Password      string         `db:"password" json:"password"`
+	Name          string         `db:"name" json:"name"`
+	ProfileImage  sql.NullString `db:"profile_image" json:"profileImage"`
+	EmailVerified bool           `db:"email_verified" json:"emailVerified"`
+	Via           string         `db:"via" json:"via"`
+	CreatedAt     *time.Time     `db:"created_at" json:"createdAt"`
+	UpdatedAt     *time.Time     `db:"updated_at" json:"updatedAt"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -21,12 +30,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func getUsers() []*User {
 	db, err := sql.Open("mysql", "tester:password@tcp(db:3306)/test")
+	fmt.Println("⭐️", db)
 	if err != nil {
+				fmt.Println("🌞", err)
 		panic(err)
 	}
 	defer db.Close()
 
 	results, err := db.Query("SELECT * FROM users")
+		fmt.Println("🐎", results)
 	if err != nil {
 		panic(err)
 	}
