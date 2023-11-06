@@ -37,3 +37,5 @@ yarn-error.*
 
 # docker
 docker-compose.yml
+
+sample.txt

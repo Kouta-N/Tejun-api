@@ -19,9 +19,9 @@ type User struct {
 	Name          string         `db:"name" json:"name"`
 	ProfileImage  sql.NullString `db:"profile_image" json:"profileImage"`
 	EmailVerified bool           `db:"email_verified" json:"emailVerified"`
-	Via           string         `db:"via" json:"via"`
 	CreatedAt     *time.Time     `db:"created_at" json:"createdAt"`
 	UpdatedAt     *time.Time     `db:"updated_at" json:"updatedAt"`
+	DeletedAt     *time.Time     `db:"deleted_at" json:"deletedAt"`
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -29,16 +29,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUsers() []*User {
-	db, err := sql.Open("mysql", "tester:password@tcp(db:3306)/test")
-	fmt.Println("⭐️", db)
+	db, err := sql.Open("mysql", "tester:password@tcp(db:3306)/test?charset=utf8&parseTime=true") //parseTime=trueは、DATEおよびDATETIME値の出力タイプを[]byte/stringの代わりにtime.Timeに変更
 	if err != nil {
-				fmt.Println("🌞", err)
 		panic(err)
 	}
 	defer db.Close()
 
 	results, err := db.Query("SELECT * FROM users")
-		fmt.Println("🐎", results)
+	fmt.Println("⭐️", results)
 	if err != nil {
 		panic(err)
 	}
@@ -46,7 +44,7 @@ func getUsers() []*User {
 	var users []*User
 	for results.Next() {
 		var u User
-		err := results.Scan(&u.ID, &u.Name)
+		err := results.Scan(&u.ID, &u.Email, &u.Password, &u.Name, &u.ProfileImage, &u.EmailVerified, &u.CreatedAt, &u.UpdatedAt, &u.DeletedAt)
 		if err != nil {
 			panic(err)
 		}
