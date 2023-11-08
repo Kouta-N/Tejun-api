@@ -20,6 +20,7 @@ type NewUser struct {
 type Todo struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"userId"`
+	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	IsDone    bool      `json:"isDone"`
 	CreatedAt time.Time `json:"createdAt"`
