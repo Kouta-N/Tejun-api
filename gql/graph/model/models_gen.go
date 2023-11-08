@@ -2,22 +2,35 @@
 
 package model
 
+import (
+	"time"
+)
+
 type NewTodo struct {
 	Text   string `json:"text"`
 	UserID string `json:"userId"`
 }
 
-type Todo struct {
-	ID      string `json:"id"`
-	UserID  string `json:"userId"`
-	Content string `json:"content"`
-	IsDone  bool   `json:"isDone"`
-	User    *User  `json:"user"`
-}
-
-type User struct {
-	ID              int    `json:"id"`
+type NewUser struct {
 	Email           string `json:"email"`
 	Name            string `json:"name"`
 	ProfileImageURL string `json:"profileImageUrl"`
+}
+
+type Todo struct {
+	ID        string    `json:"id"`
+	UserID    string    `json:"userId"`
+	Content   string    `json:"content"`
+	IsDone    bool      `json:"isDone"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+type User struct {
+	ID              int       `json:"id"`
+	Email           string    `json:"email"`
+	Name            string    `json:"name"`
+	ProfileImageURL string    `json:"profileImageUrl"`
+	CreatedAt       time.Time `json:"createdAt"`
+	UpdatedAt       time.Time `json:"updatedAt"`
 }

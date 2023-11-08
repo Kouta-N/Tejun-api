@@ -16,9 +16,33 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
 }
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	// todo := models.Todo{
+	// 	Text:   input.Text,
+	// 	UserID: input.UserID,
+	// 	Done:   false,
+	// }
+	// db.Create(&todo)
+	// return &todo, nil
+}
+
 // Todos is the resolver for the todos field.
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+	list := model.GetTodo()
+
+	var todos []*model.Todo
+	for i, _ := range list {
+		todos = append(todos, list[i])
+	}
+
+	return todos, nil
+}
+
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented: Users - users"))
 }
 
 // Mutation returns MutationResolver implementation.

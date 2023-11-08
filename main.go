@@ -7,8 +7,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"main.go/gql/graph"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -24,9 +31,7 @@ type User struct {
 	DeletedAt     *time.Time     `db:"deleted_at" json:"deletedAt"`
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World")
-}
+const defaultPort = "8082"
 
 func getUsers() []*User {
 	db, err := sql.Open("mysql", "tester:password@tcp(db:3306)/test?charset=utf8&parseTime=true") //parseTime=trueは、DATEおよびDATETIME値の出力タイプを[]byte/stringの代わりにtime.Timeに変更
@@ -59,7 +64,28 @@ func usersPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/users", usersPage)
-	log.Fatal(http.ListenAndServe(":8082", nil))
+	// http.HandleFunc("/", handler)
+	// http.HandleFunc("/users", usersPage)
+	// log.Fatal(http.ListenAndServe(":8082", nil))
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	r := gin.Default()
+	r.Use(cors.New(cors.Config{ // Use() を通してアタッチされたミドルウェアは、 すべてのリクエストのハンドラチェーンに含まれる
+		AllowOrigins:     []string{"http://localhost:8083", "*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
+		AllowCredentials: true,
+	}))
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	r.GET("/", gin.WrapF(playground.Handler("GraphQL playground", "/query")))
+	r.POST("/query", gin.WrapH(srv))
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	r.Run(":" + port) // デフォルトでPanicが発生するので、log.Fatalは不要
 }

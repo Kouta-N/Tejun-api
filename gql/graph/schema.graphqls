@@ -2,24 +2,29 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar Time
+
 type Todo {
   id: ID!
   userId: ID!
   content: String!
   isDone: Boolean!
-  user: User!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
-# TeamHubのユーザ情報
 type User {
   id: Int!
   email: String!
   name: String!
   profileImageUrl: String!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type Query {
   todos: [Todo!]!
+  users: [User!]!
 }
 
 input NewTodo {
@@ -27,6 +32,13 @@ input NewTodo {
   userId: String!
 }
 
+input NewUser {
+  email: String!
+  name: String!
+  profileImageUrl: String!
+}
+
 type Mutation {
   createTodo(input: NewTodo!): Todo!
+  createUser(input: NewUser!): User!
 }
