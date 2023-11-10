@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 func GetTodo() []*Todo {
@@ -12,6 +13,7 @@ func GetTodo() []*Todo {
 	defer db.Close()
 
 	results, err := db.Query("SELECT * FROM todos;")
+	fmt.Println("⭐️⭐️results⭐️⭐️", results)
 	if err != nil {
 		panic(err)
 	}
