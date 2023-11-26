@@ -1,12 +1,10 @@
 // 参考 https://zenn.dev/shimpo/articles/setup-go-mysql-with-docker-compose
-package main
+package routes
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -47,7 +45,7 @@ func getUsers() []*User {
 	}
 
 	var users []*User
-	for results.Next() {
+	for results.Next() { // 要素が1つでもScanの前には必ずNextを呼び出すこと
 		var u User
 		err := results.Scan(&u.ID, &u.Email, &u.Password, &u.Name, &u.ProfileImage, &u.EmailVerified, &u.CreatedAt, &u.UpdatedAt, &u.DeletedAt)
 		if err != nil {
@@ -58,10 +56,10 @@ func getUsers() []*User {
 	return users
 }
 
-func usersPage(w http.ResponseWriter, r *http.Request) {
-	users := getUsers()
-	json.NewEncoder(w).Encode(users)
-}
+// func usersPage(w http.ResponseWriter, r *http.Request) {
+// 	users := getUsers()
+// 	json.NewEncoder(w).Encode(users)
+// }
 
 func main() {
 	// http.HandleFunc("/", handler)
@@ -78,13 +76,14 @@ func main() {
 		AllowOrigins:     []string{"http://localhost:8083", "*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
-		AllowCredentials: true,
+		AllowCredentials: true, // リクエストにクッキーや HTTP 認証、クライアント側の SSL 証明書などのユーザー認証情報を含めることができるか
 	}))
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
-	r.GET("/", gin.WrapF(playground.Handler("GraphQL playground", "/query")))
-	r.POST("/query", gin.WrapH(srv))
+	r.GET("/", gin.WrapF(playground.Handler("GraphQL playground", "/query"))) // /にハンドラ関数を登録
+	r.GET("/login", Login)
+	r.POST("/query", gin.WrapH(srv)) // /queryにハンドラを登録
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	r.Run(":" + port) // デフォルトでPanicが発生するので、log.Fatalは不要

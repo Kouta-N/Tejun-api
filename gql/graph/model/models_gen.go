@@ -19,7 +19,7 @@ type NewUser struct {
 
 type Todo struct {
 	ID        string    `json:"id"`
-	UserID    string    `json:"userId"`
+	UserID    int       `json:"userId"`
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	IsDone    bool      `json:"isDone"`
@@ -28,7 +28,7 @@ type Todo struct {
 }
 
 type User struct {
-	ID              int       `json:"id"`
+	ID              string    `json:"id"`
 	Email           string    `json:"email"`
 	Name            string    `json:"name"`
 	ProfileImageURL string    `json:"profileImageUrl"`

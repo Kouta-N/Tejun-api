@@ -6,7 +6,7 @@ scalar Time
 
 type Todo {
   id: ID!
-  userId: ID!
+  userId: Int!
   title: String!
   content: String!
   isDone: Boolean!
@@ -15,7 +15,7 @@ type Todo {
 }
 
 type User {
-  id: Int!
+  id: ID!
   email: String!
   name: String!
   profileImageUrl: String!
