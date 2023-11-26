@@ -8,20 +8,14 @@ import (
 	"os"
 	"text/template"
 
-	"tmhub/admin/helpers"
-	"tmhub/admin/models/entity"
-
 	sessions "github.com/goincremental/negroni-sessions"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/oauth2/google"
-	admin "google.golang.org/api/admin/directory/v1"
 	"google.golang.org/api/option"
 )
 
 var (
 	sessionKey string = os.Getenv("SESSION_KEY")
-
-	ServiceAccountFilePath = "./tmhub-management-portal-ce3bd21320d9.json"
 )
 
 func AuthenticateSession(s sessions.Session, user entity.AuthorizedUser) {

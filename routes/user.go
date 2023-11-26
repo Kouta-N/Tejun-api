@@ -110,7 +110,3 @@ func CreateUser(user User) User {
 
 	return user
 }
-
-func AuthenticateSession(s sessions.Session, user entity.AuthorizedUser) {
-	s.Set(sessionKey, user)
-}
