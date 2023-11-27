@@ -32,4 +32,5 @@ INSERT INTO todos (`user_id`,`title`,`content`,`created_at`) VALUES (1,"起床",
 -- docker exec -it db mysql -u root -p
 -- show databases;
 -- use test;
+-- 上のSQLを流す
 -- select * from users;

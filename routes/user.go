@@ -1,11 +1,16 @@
 package routes
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"main.go/handlers"
+	"main.go/helpers"
+	"main.go/models"
 
 	sessions "github.com/goincremental/negroni-sessions"
 	"github.com/julienschmidt/httprouter"
@@ -17,26 +22,21 @@ var sessionKey string = os.Getenv("SESSION_KEY")
 
 func Signup(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	u := new(models.User)
-	if errs := binding.Bind(req, u); errs != nil {
+	if errs := binding.Bind(req, u); errs != nil { // reqから存在するならuserを取得
 		log.Println(errs.Error())
 		return
 	}
 	u.Email = strings.TrimSpace(u.Email)
-
-	// locale := req.Context().Value("locale").(string)
-
 	err := u.GetByEmail(u.Email)
-
 	if err == nil {
 		return
 	}
 
-	// u.SetLocale(locale)
-
 	user := models.CreateUser(*u)
 
 	session := sessions.GetSession(req)
-	err = handlers.AuthenticateSession(session, &user)
+	fmt.Println("⭐️session", session);
+	err = handlers.AuthenticateSession(session, &user) //sessionのsession keyにユーザーを登録
 	if err != nil {
 		helpers.WriteErr(w, http.StatusUnauthorized, err)
 		return

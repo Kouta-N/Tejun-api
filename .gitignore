@@ -39,3 +39,4 @@ yarn-error.*
 docker-compose.yml
 
 sample.txt
+vendor
